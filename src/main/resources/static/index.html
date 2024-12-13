@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #chat-messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        #message-form {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+    <div id="chat-messages"></div>
+    <form id="message-form">
+        <input type="text" id="sender-input" placeholder="Your Name" required>
+        <input type="text" id="message-input" placeholder="Type a message" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const messageForm = document.getElementById('message-form');
+        const senderInput = document.getElementById('sender-input');
+        const messageInput = document.getElementById('message-input');
+
+        // WebSocket connection
+        const socket = new SockJS('http://192.168.1.35:3000/ws-chat');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            
+            // Subscribe to the messages topic
+            stompClient.subscribe('/topic/messages', function (message) {
+                const chatMessage = JSON.parse(message.body);
+                displayMessage(chatMessage);
+            });
+        }, function (error) {
+            console.error('Connection error: ', error);
+        });
+
+        // Send message function
+        function sendMessage(event) {
+            event.preventDefault();
+            
+            const message = {
+                sender: senderInput.value,
+                content: messageInput.value,
+                recipient: 'AllUsers'
+            };
+
+            // Send message to the server
+            stompClient.send("/app/sendMessage", {}, JSON.stringify(message));
+            
+            // Clear message input
+            messageInput.value = '';
+        }
+
+        // Display message in chat window
+        function displayMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${message.sender}: ${message.content}`;
+            chatMessages.appendChild(messageElement);
+            
+            // Auto-scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add event listener to form
+        messageForm.addEventListener('submit', sendMessage);
+    </script>
+</body>
+</html>

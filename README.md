@@ -1,7 +1,3 @@
-<html>
-<head>
-    <title>Chatting Application - README</title>
-</head>
 <body>
     <h1>Chatting Application</h1>
     <p>
@@ -29,12 +25,6 @@
         <li><strong>WebSockets</strong>: Enabling real-time, full-duplex communication.</li>
         <li><strong>SockJS</strong>: Providing fallback options for WebSocket communication.</li>
         <li><strong>STOMP</strong>: Simple Text-Oriented Messaging Protocol for WebSocket communication.</li>
-    </ul>
-
-<h3>Frontend:</h3>
-    <ul>
-        <li><strong>HTML, CSS, JavaScript</strong>: For building the user interface.</li>
-        <li><strong>STOMP Client</strong>: JavaScript library for implementing STOMP over WebSockets.</li>
     </ul>
 
 <hr>
@@ -85,4 +75,4 @@
     <p>Contributions are welcome! Please fork the repository and create a pull request with your changes.</p>
 
 
-</html>
+</body>
